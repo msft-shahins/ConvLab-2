@@ -58,8 +58,8 @@ class CLAgent(Agent):
         self.logger.info(f'request: {request}')
         response = requests.post(self.url, json=request)
         response.raise_for_status()
-        self.logger.info(f'CLWoz response: {response}')
-        return response.text
+        self.logger.info(f'CLWoz response: {response.text}')
+        return response.json()
 
     def _http_ok(self, status_code):
         if status_code >= 200 and status_code < 300:
@@ -74,6 +74,12 @@ def set_seed(r_seed):
 
 
 def test_end2end():
+    # setup basic logging 
+    logging.basicConfig(
+            format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
+            datefmt="%m/%d/%Y %H:%M:%S",
+            level=logging.INFO,
+        )
     # template NLG
     sys_nlg = TemplateNLG(is_user=False)
     # assemble
@@ -95,6 +101,7 @@ def test_end2end():
 
     set_seed(20200202)
     analyzer.comprehensive_analyze(sys_agent=sys_agent, model_name='CL-TemplateNLG', total_dialog=1)
+    #analyzer.sample_dialog(sys_agent)
 
 if __name__ == '__main__':
     test_end2end()
