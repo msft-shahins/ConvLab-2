@@ -142,7 +142,7 @@ class GoalGenerator:
                  sample_reqt_from_trainset=False):
         """
         Args:
-            goal_model_path: path to a goal model 
+            goal_model_path: path to a goal model
             corpus_path: path to a dialog corpus to build a goal model
             boldify: highlight some information in the goal message
             sample_info_from_trainset: if True, sample info slots combination from train set, else sample each slot independently
