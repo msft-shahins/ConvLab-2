@@ -20,18 +20,22 @@ import random
 import numpy as np
 from pprint import pprint
 
+from tests.test_CL_templateNLG import CLAgent
+
 rgi_queue = PriorityQueue(maxsize=0)
 rgo_queue = PriorityQueue(maxsize=0)
 
 app = Flask(__name__)
 
 # sys_nlu = BERTNLU()
-sys_nlu = MILU()
-sys_dst = RuleDST()
-sys_policy = RulePolicy(character='sys')
+# sys_nlu = MILU()
+# sys_dst = RuleDST()
+# sys_policy = RulePolicy(character='sys')
 sys_nlg = TemplateNLG(is_user=False)
 
-agent = PipelineAgent(sys_nlu,sys_dst,sys_policy, sys_nlg,'sys')
+#agent = PipelineAgent(sys_nlu,sys_dst,sys_policy, sys_nlg,'sys')
+agent = CLAgent(nlg=sys_nlg, name='sys')
+
 
 print(agent.response('I am looking for a hotel'))
 
