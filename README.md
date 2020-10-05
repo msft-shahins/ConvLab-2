@@ -105,6 +105,7 @@ Performance (the first row is the default config for each module. Empty entries 
 
 | NLU         | DST       | Policy         | NLG         | Complete rate | Success rate | Book rate | Inform P/R/F1 | Turn(succ/all) |
 | ----------- | --------- | -------------- | ----------- | ------------- | ------------ | --------- | --------- | -------------- |
+| None | None   | **Coversation Learner**     | TemplateNLG |   92.4       |     85.0    |   91.4 | 79.3/94.9/84.5 | 13.8/14.9      |
 | **BERTNLU** | RuleDST   | RulePolicy     | TemplateNLG |   90.5       |     81.3    |   91.1 | 79.7/92.6/83.5 | 11.6/12.3      |
 | **MILU**    | RuleDST | RulePolicy | TemplateNLG |    93.3       |   81.8      |   93.0    | 80.4/94.7/84.8 | 11.3/12.1      |
 | BERTNLU | RuleDST | RulePolicy | **SCLSTM**  |   48.5    | 40.2 | 56.9   | 62.3/62.5/58.7 |  11.9/27.1         |
