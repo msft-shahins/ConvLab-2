@@ -22,7 +22,7 @@ class CLAgent(Agent):
         self.name = name
         self.nlg = nlg
         self.convesation_Id = str(uuid.uuid4())   
-        self.url = "https://clwoz.azurewebsites.net/api/multiwoz"
+        self.url = "https://clwoz2.azurewebsites.net/api/multiwoz"
         self.logger = logging.getLogger(self.__class__.__name__)
         
 
