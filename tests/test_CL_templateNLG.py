@@ -15,15 +15,17 @@ import random
 import numpy as np
 import torch
 import logging
+import os
 
 class CLAgent(Agent):
     
-    def __init__(self, nlg: NLG, name: str):
+    def __init__(self, nlg: NLG, name: str, res_file=None):
         self.name = name
         self.nlg = nlg
         self.convesation_Id = str(uuid.uuid4())   
-        self.url = "https://clwoz.azurewebsites.net/api/multiwoz"
+        self.url = "https://clwoz2.azurewebsites.net/api/multiwoz"
         self.logger = logging.getLogger(self.__class__.__name__)
+        self.res_file = res_file
         
 
     def response(self, observation):
@@ -43,6 +45,9 @@ class CLAgent(Agent):
         """
         try:
             prediction = self._get_CL_prediction(observation)
+            if self.res_file: 
+                print('user:', observation,file=self.res_file)
+                print(f'CLWOZ: {prediction}', file=self.res_file)
             model_response = self.nlg.generate(prediction)
         except Exception as e:
             self.logger.warning(f'calling to CL failed with {e}')
@@ -84,11 +89,7 @@ def test_end2end():
             datefmt="%m/%d/%Y %H:%M:%S",
             level=logging.INFO,
         )
-    # template NLG
-    sys_nlg = TemplateNLG(is_user=False)
-    # assemble
-    sys_agent = CLAgent(nlg=sys_nlg, name='sys')
-
+    
     # BERT nlu trained on sys utterance
     user_nlu = BERTNLU(mode='sys', config_file='multiwoz_sys_context.json',
                        model_file='https://convlab.blob.core.windows.net/convlab-2/bert_multiwoz_sys_context.zip')
@@ -103,8 +104,22 @@ def test_end2end():
 
     analyzer = Analyzer(user_agent=user_agent, dataset='multiwoz')
 
-    set_seed(20200720)
-    analyzer.comprehensive_analyze(sys_agent=sys_agent, model_name='CL-TemplateNLG', total_dialog=1)
+    set_seed(1020)
+    
+    model_name = 'CL-TemplateNLG'
+    output_dir = os.path.join('results', model_name)
+    with open(os.path.join(output_dir, 'res.txt'), 'w') as res_file:
+        # template NLG
+        sys_nlg = TemplateNLG(is_user=False)
+        
+        # SCLSTM
+        #from convlab2.nlg.sclstm.multiwoz import SCLSTM
+        #sys_nlg = SCLSTM(is_user=False, use_cuda=False)
+
+
+        # system agent
+        sys_agent = CLAgent(nlg=sys_nlg, name='sys', res_file=res_file)
+        analyzer.comprehensive_analyze(sys_agent=sys_agent, model_name=model_name, total_dialog=1000, res_file=res_file)
     #analyzer.sample_dialog(sys_agent)
 
 if __name__ == '__main__':

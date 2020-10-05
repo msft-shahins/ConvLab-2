@@ -56,7 +56,7 @@ class Analyzer:
         pprint(sess.evaluator.goal)
         print('=' * 100)
 
-    def comprehensive_analyze(self, sys_agent, model_name, total_dialog=100):
+    def comprehensive_analyze(self, sys_agent, model_name, total_dialog=100, res_file=None):
         sess = self.build_sess(sys_agent)
 
         goal_seeds = [random.randint(1,100000) for _ in range(total_dialog)]
@@ -84,7 +84,12 @@ class Analyzer:
         output_dir = os.path.join('results', model_name)
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
-        f = open(os.path.join(output_dir, 'res.txt'), 'w')
+
+        if res_file:
+            f = res_file
+        else:
+            f = open(os.path.join(output_dir, 'res.txt'), 'w')
+        
         flog = open(os.path.join(output_dir, 'log.txt'), 'w')
 
         for j in tqdm(range(total_dialog), desc="dialogue"):
@@ -102,11 +107,11 @@ class Analyzer:
 
             step = 0
 
-            # print('init goal:',file=f)
-            # # print(sess.evaluator.goal, file=f)
+            print('init goal:',file=f)
+            print(sess.evaluator.goal, file=f)
             # # pprint(sess.evaluator.goal)
-            # print(sess.user_agent.policy.policy.goal.domain_goals, file=f)
-            # print('-' * 50,file=f)
+            print(sess.user_agent.policy.policy.goal.domain_goals, file=f)
+            print('-' * 50,file=f)
 
             for i in range(40):
                 sys_response, user_response, session_over, reward = sess.next_turn(
@@ -118,6 +123,12 @@ class Analyzer:
                 # print('sys out', sess.sys_agent.get_out_da(),file=flog)
                 print('user:', user_response,file=flog)
                 print('sys:', sys_response,file=flog)
+
+                # print('sys in', sess.sys_agent.get_in_da(),file=f)
+                # print('sys out', sess.sys_agent.get_out_da(),file=f)
+                # print('user:', user_response,file=f)
+                print('sys:', sys_response,file=f)
+
 
                 step += 2
 
@@ -147,6 +158,11 @@ class Analyzer:
             book_rate = sess.evaluator.book_rate()
             stats = sess.evaluator.inform_F1()
             percentage = sess.evaluator.final_goal_analyze()
+            
+            print(f'{j}: task success: {task_success}', file=f)
+            print(f'{j}: task complete: {task_complete}', file=f)
+            f.flush()
+
             if task_success:
                 suc_num += 1
                 turn_suc_num += step
