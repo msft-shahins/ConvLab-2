@@ -21,7 +21,7 @@ class CLAgent(Agent):
     def __init__(self, nlg: NLG, name: str):
         self.name = name
         self.nlg = nlg
-        self.convesation_Id = str(uuid.uuid4())   
+        self.conversation_Id = str(uuid.uuid4())   
         self.url = "https://clwoz2.azurewebsites.net/api/multiwoz"
         self.logger = logging.getLogger(self.__class__.__name__)
         
@@ -52,12 +52,18 @@ class CLAgent(Agent):
 
     def init_session(self):
         """Reset the class variables to prepare for a new session."""
-        self.convesation_Id = str(uuid.uuid4())
+        self.conversation_Id = str(uuid.uuid4())
+    
+    def state_replace(self, state):
+        self.conversation_Id = state
+
+    def state_return(self):
+        return self.conversation_Id
 
     def _get_CL_prediction(self, utterance):
         request = {
             'input': utterance, 
-            'id': self.convesation_Id
+            'id': self.conversation_Id
         }
         self.logger.info(f'user: {utterance}')
         response = requests.post(self.url, json=request)
